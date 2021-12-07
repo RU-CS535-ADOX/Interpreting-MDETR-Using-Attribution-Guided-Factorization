@@ -1,0 +1,5 @@
+submitit INFO (2021-11-01 15:01:57,003) - Starting with JobEnvironment(job_id=16130812, hostname=gpu011.amarel.rutgers.edu, local_rank=1(4), node=3(4), global_rank=13(16))
+submitit INFO (2021-11-01 15:01:57,003) - Loading pickle: /home/xl598/Desktop/mdetr/checkpoint/xl598/experiments/16130812/16130812_submitted.pkl
+Setting GLOO and NCCL sockets IFNAME to: eno1
+Process group: 16 tasks, rank: 13
+| distributed init (rank 13): file:///home/xl598/Desktop/mdetr/checkpoint/xl598/experiments/83a81c3cd0174812ab7773be2e3426a8_init

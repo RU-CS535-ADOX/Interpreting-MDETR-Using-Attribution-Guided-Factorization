@@ -1,0 +1,14 @@
+{
+    "combine_datasets": ["flickr", "mixed"],
+    "combine_datasets_val": ["gqa", "flickr", "refexp"],
+    "coco_path": "/coco_tiny/train2014/",
+    "vg_img_path": "/gqa_tiny/images/",
+    "flickr_img_path": "/flickr30k_tiny/images/",
+    "refexp_ann_path": "/anns/",
+    "flickr_ann_path": "/anns/",
+    "gqa_ann_path": "/anns/",
+    "refexp_dataset_name": "all",
+    "GT_type": "separate",
+    "flickr_dataset_path": "/flickr30k_tiny/annotations/"
+}
+
