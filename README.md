@@ -14,6 +14,8 @@ The implementation contains the following two building blocks:
 
 #### Model checkpoint paths
 
+The model checkpoint for MDETR and dataset annotations can be found at: <https://zenodo.org/record/4721981#.YawS29DMKUk>
+
 - ResNet-101: <https://zenodo.org/record/4721981/files/pretrained_resnet101_checkpoint.pth>
 - EfficientNet-B3: <https://zenodo.org/record/4721981/files/pretrained_EB3_checkpoint.pth>
 - EfficientNet-B5: <https://zenodo.org/record/4721981/files/pretrained_EB5_checkpoint.pth>
