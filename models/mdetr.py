@@ -21,6 +21,8 @@ from .postprocessors import build_postprocessors
 from .segmentation import DETRsegm, dice_loss, sigmoid_focal_loss
 from .transformer import build_transformer
 
+from modules.layers import *
+
 
 class MDETR(nn.Module):
     """ This is the MDETR module that performs modulated object detection """
@@ -60,8 +62,8 @@ class MDETR(nn.Module):
         self.num_queries = num_queries
         self.transformer = transformer
         hidden_dim = transformer.d_model
-        self.class_embed = nn.Linear(hidden_dim, num_classes + 1)
-        self.isfinal_embed = nn.Linear(hidden_dim, 1) if predict_final else None
+        self.class_embed = Linear(hidden_dim, num_classes + 1)
+        self.isfinal_embed = Linear(hidden_dim, 1) if predict_final else None
         self.bbox_embed = MLP(hidden_dim, hidden_dim, 4, 3)
         self.query_embed = nn.Embedding(num_queries, hidden_dim)
         if qa_dataset is not None:
@@ -238,6 +240,12 @@ class MDETR(nn.Module):
                     for i in range(len(outputs_isfinal[:-1])):
                         out["aux_outputs"][i]["pred_isfinal"] = outputs_isfinal[i]
             return out
+        
+    def AGF(self, **kwargs):
+        cam, grad_outputs = self.classifier.AGF(**kwargs)
+        
+        
+        return cam.sum(1, keepdim=True)
 
 
 class ContrastiveCriterion(nn.Module):
