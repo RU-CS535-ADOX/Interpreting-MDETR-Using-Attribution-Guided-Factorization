@@ -242,10 +242,7 @@ class MDETR(nn.Module):
             return out
         
     def AGF(self, **kwargs):
-        cam, grad_outputs = self.classifier.AGF(**kwargs)
-        
-        
-        return cam.sum(1, keepdim=True)
+        print("AGF Modification Applied:)")
 
 
 class ContrastiveCriterion(nn.Module):
