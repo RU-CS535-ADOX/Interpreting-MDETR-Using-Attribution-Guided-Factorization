@@ -16,6 +16,8 @@ from util.misc import NestedTensor
 
 from .position_encoding import build_position_encoding
 
+from modules.layers import *
+
 
 class FrozenBatchNorm2d(torch.nn.Module):
     """
@@ -161,7 +163,7 @@ class TimmBackbone(nn.Module):
         return out
 
 
-class Joiner(nn.Sequential):
+class Joiner(Sequential):
     def __init__(self, backbone, position_embedding):
         super().__init__(backbone, position_embedding)
 
