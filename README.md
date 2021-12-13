@@ -29,7 +29,7 @@ After propagating an image sample or a batch of image samples into the model, we
 - Bounding Box coordinates - Then corresponding pred_boxes are scaled according to the size of the image to get the box coordinates. 
 - Labels - ‘tokenized’ is then used to decode the input labels for each prediction. 
 
-The above three data is then used to plot the final predictions on the given input image sample. 
+The above three data are then used to plot the final predictions on the given input image sample. 
 
 
 #### Model checkpoint paths
