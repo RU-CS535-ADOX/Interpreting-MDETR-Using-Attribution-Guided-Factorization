@@ -19,15 +19,15 @@ The implementation contains the following two building blocks:
 
 After propagating an image sample or a batch of image samples into the model, we get the output as a dictionary containing keys - pred_logits, pred_boxes, proj_queries, proj_tokens and tokenized.
 
-'pred_logits' - This is the probability of each predicted class for all the N object queries across all images in the batch. Shape: [batch_size x num_queries x (num_classes + 1)]
-'pred_boxes' - This is the normalized coordinate values for prediction boxes represented as (center_x, center_y, height, width)
-'tokenized'  - This contains the tokenized input caption
+- 'pred_logits' - This is the probability of each predicted class for all the N object queries across all images in the batch. Shape: [batch_size x num_queries x (num_classes + 1)]
+- 'pred_boxes' - This is the normalized coordinate values for prediction boxes represented as (center_x, center_y, height, width)
+- 'tokenized'  - This contains the tokenized input caption
 
 #### Visualizing output
 
-Predictions - The softmax function is applied on pred_logits to get the probabilities to sum to 1. And then only the predictions with the confidence of 0.7 are taken. This gives us the final predictions for the given input caption.
-Bounding Box coordinates - Then corresponding pred_boxes are scaled according to the size of the image to get the box coordinates. 
-Labels - ‘tokenized’ is then used to decode the input labels for each prediction. 
+- Predictions - The softmax function is applied on pred_logits to get the probabilities to sum to 1. And then only the predictions with the confidence of 0.7 are taken. This gives us the final predictions for the given input caption.
+- Bounding Box coordinates - Then corresponding pred_boxes are scaled according to the size of the image to get the box coordinates. 
+- Labels - ‘tokenized’ is then used to decode the input labels for each prediction. 
 
 The above three data is then used to plot the final predictions on the given input image sample. 
 
