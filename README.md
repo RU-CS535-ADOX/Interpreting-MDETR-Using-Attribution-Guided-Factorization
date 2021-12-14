@@ -14,7 +14,7 @@ The implementation contains the following two building blocks:
 
 ### MDETR Model Architecture
 
-```
+```pseudocode
 MDETR(
   (transformer): Transformer(
     (encoder): TransformerEncoder(
@@ -1157,6 +1157,7 @@ MDETR(
   (contrastive_align_projection_text): Linear(in_features=256, out_features=64, bias=True)
 )
 ```
+
 
 #### Model checkpoint paths
 
