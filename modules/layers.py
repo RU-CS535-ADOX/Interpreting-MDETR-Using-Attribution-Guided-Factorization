@@ -272,6 +272,10 @@ class Linear(nn.Linear, AGFProp):
             # Compute - C
             xabs = self.X.abs()
             wabs = self.weight.abs()
+            # print(xabs.size())
+            # print(wabs.size())
+            # print(F.linear(xabs, wabs).size())
+            # print(cam.ne(0).size())
             Zabs = F.linear(xabs, wabs) * cam.ne(0).type(cam.type())
 
             S = safe_divide(cam, Zabs)

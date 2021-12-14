@@ -262,15 +262,17 @@ class MDETR(nn.Module):
     def AGF(self, **kwargs):
         print("AGF Modification Applied:)")
         cam, grad_outputs = None, None
-        # if self.contrastive_align_loss:
-        #     cam, grad_outputs = self.contrastive_align_projection_text.AGF(**kwargs)
-        #     cam, grad_outputs = self.contrastive_align_projection_image.AGF(cam, grad_outputs**kwargs)
+        if self.contrastive_align_loss:
+            cam, grad_outputs = self.contrastive_align_projection_text.AGF(**kwargs)
+            print(cam.size())
+            cam = cam.reshape_as(self.contrastive_align_projection_image.Y)
+            cam, grad_outputs = self.contrastive_align_projection_image.AGF(cam, grad_outputs, **kwargs)
 
-        # if self.contrastive_loss:
-        #     cam, grad_outputs = self.contrastive_projection_text.AGF(cam, grad_outputs, **kwargs)
-        #     cam, grad_outputs = self.contrastive_projection_image.AGF(cam, grad_outputs, **kwargs)
+        if self.contrastive_loss:
+            cam, grad_outputs = self.contrastive_projection_text.AGF(cam, grad_outputs, **kwargs)
+            cam, grad_outputs = self.contrastive_projection_image.AGF(cam, grad_outputs, **kwargs)
 
-        cam, grad_outputs = self.input_proj.AGF(cam, grad_outputs, **kwargs)
+        cam, grad_outputs = self.input_proj.AGF(**kwargs)
         cam, grad_outputs = self.bbox_embed.AGF(cam, grad_outputs, **kwargs)
         cam, grad_outputs = self.class_embed.AGF(cam, grad_outputs, **kwargs)
 

@@ -37,7 +37,7 @@ CLS2IDX = {
     35: 'mud turtle',
     36: 'terrapin',
     37: 'box turtle, box tortoise',
-    38: 'banded gecko',
+    38: 'dog',
     39: 'common iguana, iguana, Iguana iguana',
     40: 'American chameleon, anole, Anolis carolinensis',
     41: 'whiptail, whiptail lizard',
