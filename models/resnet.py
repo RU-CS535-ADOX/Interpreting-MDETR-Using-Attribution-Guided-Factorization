@@ -184,7 +184,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = AdaptiveAvgPool2d((1, 1))
-        self.fc = Linear(512 * block.expansion, num_classes)
+        #self.fc = Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -233,15 +233,15 @@ class ResNet(nn.Module):
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        #x = self.fc(x)
 
         return x
 
     def AGF(self, **kwargs):
-        cam, grad_outputs = self.fc.AGF(**kwargs)
-        cam = cam.reshape_as(self.avgpool.Y)
-        grad_outputs = (grad_outputs[0].reshape_as(self.avgpool.Y),)
-        cam, grad_outputs = self.avgpool.AGF(cam, grad_outputs, **kwargs)
+        #cam, grad_outputs = self.fc.AGF(**kwargs)
+        #cam = cam.reshape_as(self.avgpool.Y)
+        #grad_outputs = (grad_outputs[0].reshape_as(self.avgpool.Y),)
+        cam, grad_outputs = self.avgpool.AGF(**kwargs)
 
         cam, grad_outputs = self.layer4.AGF(cam, grad_outputs, **kwargs)
         cam, grad_outputs = self.layer3.AGF(cam, grad_outputs, **kwargs)
@@ -315,8 +315,9 @@ def resnet101(pretrained=False, **kwargs):
         new_state_dict = OrderedDict()
         
         for key, val in state_dict.items():
-            name = "backbone.0.body." + key
-            new_state_dict[name] = val
+            if "backbone" in key:
+                name = key[len("backbone.0.body."):]
+                new_state_dict[name] = val
         
         model.load_state_dict(new_state_dict)
 
