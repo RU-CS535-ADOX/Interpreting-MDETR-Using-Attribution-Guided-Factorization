@@ -3,6 +3,7 @@ import torch.utils.model_zoo as model_zoo
 import torch
 
 import torch.backends.cudnn as cudnn
+from collections import OrderedDict
 
 from modules.layers import *
 
@@ -299,16 +300,25 @@ def resnet101(pretrained=False, **kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
-    if device == 'cuda':
-        model = torch.nn.DataParallel(model)
-        cudnn.benchmark = True
+    # if device == 'cuda':
+    #     model = torch.nn.DataParallel(model)
+    #     cudnn.benchmark = True
     if pretrained:
         checkpoint = torch.hub.load_state_dict_from_url(
             url=model_urls['resnet101'],
             map_location="cpu",
             check_hash=True,
         )
-        model.module.load_state_dict(checkpoint["model"])
+        
+        state_dict = checkpoint["model"]
+        # print(state_dict.keys())
+        new_state_dict = OrderedDict()
+        
+        for key, val in state_dict.items():
+            name = "backbone.0.body." + key
+            new_state_dict[name] = val
+        
+        model.load_state_dict(new_state_dict)
 
     return model
 
