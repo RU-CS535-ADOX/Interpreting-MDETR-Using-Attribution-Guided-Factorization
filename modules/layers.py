@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 __all__ = ['forward_hook', 'ReLU', 'Dropout', 'BatchNorm2d', 'Linear', 'MaxPool2d',
            'AdaptiveAvgPool2d', 'AvgPool2d', 'Conv2d', 'Sequential', 'safe_divide',
-           'Add', 'Clone', 'minmax_dims']
+           'Add', 'Clone', 'minmax_dims', 'Embedding', 'FrozenBatchNorm2d']
 
 
 # Misc
@@ -234,6 +234,11 @@ class AdaptiveAvgPool2d(nn.AdaptiveAvgPool2d, AGFPropSimple):
 class AvgPool2d(nn.AvgPool2d, AGFPropSimple):
     pass
 
+'''
+nn.Embedding layer with AGF modification.
+'''
+class Embedding(nn.Embedding, AGFProp):
+    pass
 
 class Linear(nn.Linear, AGFProp):
     def AGF(self, cam=None, grad_outputs=None, **kwargs):
@@ -443,3 +448,43 @@ class Sequential(nn.Sequential):
         for m in reversed(self._modules.values()):
             cam, grad_outputs = m.AGF(cam, grad_outputs, **kwargs)
         return cam, grad_outputs
+
+
+class FrozenBatchNorm2d(nn.Module):
+    """
+    BatchNorm2d where the batch statistics and the affine parameters are fixed.
+
+    Copy-paste from torchvision.misc.ops with added eps before rqsrt,
+    without which any other models than torchvision.models.resnet[18,34,50,101]
+    produce nans.
+    """
+
+    def __init__(self, n):
+        super(FrozenBatchNorm2d, self).__init__()
+        self.register_buffer("weight", torch.ones(n))
+        self.register_buffer("bias", torch.zeros(n))
+        self.register_buffer("running_mean", torch.zeros(n))
+        self.register_buffer("running_var", torch.ones(n))
+
+    def _load_from_state_dict(
+        self, state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
+    ):
+        num_batches_tracked_key = prefix + "num_batches_tracked"
+        if num_batches_tracked_key in state_dict:
+            del state_dict[num_batches_tracked_key]
+
+        super(FrozenBatchNorm2d, self)._load_from_state_dict(
+            state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
+        )
+
+    def forward(self, x):
+        # move reshapes to the beginning
+        # to make it fuser-friendly
+        w = self.weight.reshape(1, -1, 1, 1)
+        b = self.bias.reshape(1, -1, 1, 1)
+        rv = self.running_var.reshape(1, -1, 1, 1)
+        rm = self.running_mean.reshape(1, -1, 1, 1)
+        eps = 1e-5
+        scale = w * (rv + eps).rsqrt()
+        bias = b - rm * scale
+        return x * scale + bias
