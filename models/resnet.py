@@ -1,5 +1,8 @@
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
+import torch
+
+import torch.backends.cudnn as cudnn
 
 from modules.layers import *
 
@@ -13,6 +16,11 @@ model_urls = {
     'resnet101': 'https://zenodo.org/record/4721981/files/pretrained_resnet101_checkpoint.pth',
     'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
 }
+
+if torch.cuda.is_available():
+    device = torch.device("cuda:0")
+else:
+    device = torch.device("cpu")
 
 
 def conv3x3(in_planes, out_planes, stride=1):
@@ -291,13 +299,16 @@ def resnet101(pretrained=False, **kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
+    if device == 'cuda':
+        model = torch.nn.DataParallel(model)
+        cudnn.benchmark = True
     if pretrained:
         checkpoint = torch.hub.load_state_dict_from_url(
             url=model_urls['resnet101'],
             map_location="cpu",
             check_hash=True,
         )
-        model.load_state_dict(checkpoint["model"])
+        model.module.load_state_dict(checkpoint["model"])
 
     return model
 
