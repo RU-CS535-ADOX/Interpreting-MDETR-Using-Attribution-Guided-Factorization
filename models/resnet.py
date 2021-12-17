@@ -292,7 +292,13 @@ def resnet101(pretrained=False, **kwargs):
     """
     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
     if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
+        checkpoint = torch.hub.load_state_dict_from_url(
+            url=model_urls['resnet101'],
+            map_location="cpu",
+            check_hash=True,
+        )
+        model.load_state_dict(checkpoint["model"])
+
     return model
 
 
